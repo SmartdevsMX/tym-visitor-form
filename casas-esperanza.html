@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Iglesia Trigo y Miel - Reporte de Casas de Esperanza</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Raleway', sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    :root {
+      --gold: #E0C34B;
+      --bronze: #AB9256;
+      --coral: #C87F7F;
+      --charcoal: #323e45;
+      --warm-gray: #7A7A7A;
+      --bg-warm: #faf8f4;
+
+      --text-primary: var(--charcoal);
+      --text-secondary: var(--warm-gray);
+      --bg-primary: var(--bg-warm);
+      --bg-secondary: #ffffff;
+      --button-primary: var(--coral);
+      --border-color: var(--bronze);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-primary: #f5f1ed;
+        --text-secondary: #c0b5a8;
+        --bg-primary: #2d2520;
+        --bg-secondary: #3a3228;
+        --button-primary: #e8a4a4;
+        --border-color: #8b7b6b;
+      }
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #app {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-in-out;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
+    }
+
+    .screen-content {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+      letter-spacing: 0.8px;
+      background-color: var(--bg-primary);
+      z-index: 10;
+      font-weight: 500;
+    }
+
+    .screen-with-progress {
+      padding-top: 60px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      width: 100%;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="time"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 16px;
+      color: var(--text-primary);
+      background-color: var(--bg-secondary);
+      transition: border-color 0.3s, box-shadow 0.3s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    input[type="email"]:focus,
+    input[type="time"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--button-primary);
+      box-shadow: 0 0 0 3px rgba(200, 127, 127, 0.15);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: none;
+      font-size: 15px;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23323e45' d='M1 4l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 28px;
+      width: 100%;
+    }
+
+    .button-group-horizontal {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 28px;
+      width: 100%;
+    }
+
+    @media (min-width: 480px) {
+      .button-group-horizontal {
+        flex-direction: row;
+        gap: 12px;
+      }
+
+      .button-group-horizontal button {
+        flex: 1;
+      }
+    }
+
+    button {
+      padding: 16px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Raleway', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-primary {
+      background-color: var(--button-primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-primary);
+      border: 2px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-secondary);
+      border-color: var(--button-primary);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:active {
+      background-color: rgba(200, 127, 127, 0.1);
+      transform: scale(0.98);
+    }
+
+    .day-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    @media (min-width: 480px) {
+      .day-buttons {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (min-width: 600px) {
+      .day-buttons {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .day-button {
+      padding: 12px 8px;
+      font-size: 13px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      border: 2px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--bg-secondary);
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+
+    .checkbox-item input[type="checkbox"]:checked {
+      background-color: var(--button-primary);
+      border-color: var(--button-primary);
+    }
+
+    .checkbox-item input[type="checkbox"]:checked::after {
+      content: '✓';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .checkbox-item label {
+      flex: 1;
+      margin: 0;
+      font-size: 14px;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 400;
+      cursor: pointer;
+      color: var(--text-primary);
+    }
+
+    .checkbox-text-input {
+      margin-top: 10px;
+      margin-left: 30px;
+      display: none;
+    }
+
+    .checkbox-text-input.show {
+      display: block;
+    }
+
+    .final-message {
+      font-size: 28px;
+      margin-bottom: 40px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .welcome-buttons {
+      margin-top: 32px;
+    }
+
+    .logo {
+      width: 88px;
+      height: 88px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 28px;
+        margin-bottom: 16px;
+      }
+
+      .subtitle {
+        font-size: 15px;
+        margin-bottom: 28px;
+      }
+
+      .final-message {
+        font-size: 24px;
+        margin-bottom: 32px;
+      }
+
+      .progress-bar {
+        padding: 14px 16px;
+        font-size: 12px;
+      }
+
+      .screen-with-progress {
+        padding-top: 56px;
+      }
+    }
+
+    @media (max-height: 600px) {
+      .screen-content {
+        transform: scale(0.9);
+        transform-origin: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const API_ENDPOINT = 'http://192.168.1.83:30109/webhook/tym-casas-reporte';
+    const LOGO_DATA_URI = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD//gAQTGF2YzYwLjMxLjEwMgD/2wBDAAgGBgcGBwgICAgICAkJCQoKCgkJCQkKCgoKCgoMDAwKCgoKCgoKDAwMDA0ODQ0NDA0ODg8PDxISEREVFRUZGR//xACVAAEAAgMBAQEAAAAAAAAAAAAABwgEBgUDAgEBAQAAAAAAAAAAAAAAAAAAAAAQAAEEAAQDAwUIDQkGBAcBAAEAAwQCEgYRBRMhBxRBMVE2OCIytHUjdDMWFXFyc7KzgbFiYVI3NBdCJDWRlVZV0kPEtcPBoYKU01OS1KLRGKUoY6NUEQEAAAAAAAAAAAAAAAAAAAAA/8AAEQgBGAEYAwEiAAIRAAMRAP/aAAwDAQACEQMRAD8An9ERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBEUH79tfWtzd9xvtkw0gWmSDDr2jaxhjF23CGl64xpTTlbn5UE4IqzZm3HrNlCANw3bdLsR7PUYFqOba6eJetrVGFtu1vClufgsnZLdbsw7bG3OBuVnYsmtrNXs9tbZIre1DrS9BYetUjmEFkEUQZI27q2xmCG5mOUXdqAe7RTj7dbUli4b9ViocOjuE8vwrz675u37Ko2I7PuDsHtJm8bh0atxOH2fBrxKX9nHbw08UExoq8xIXXadGYlMbgbNSGm3m7GRtVSW3aC9SQaAjWpHI816Obd18j1Lgl3cwc8FH9nvY6dwqa6H6kFgkUJdPesW6Sd6rlvNsesabd3gNSeF2e4k/wsSmOVQXDypegqNSBh56qVc2S34GXN6lRnC0/H2ya8y4NCaONx72pcAgjWtgDzBCDsIoi6E5r3zNMTenN4nOTrR34tWS5VquCt6OmwHDpTxNR46+ClTcNwi7VDfmzHqR40duzrrtzpWlKjmfKfIAOZPIc0GSirzuPVPO3UDc3dsyTDdix6eMgUbMgt66B2Q+7qxFrb+Go9fuFieS9f3bdYb145zWQ77XC+mNx118nqs8L/ggsCirzC6m576dbo1t2co7k2Jf/ADbhsv8A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d5qXHGLgHyEHTyla/nDrVOznGc2HK+1TaWnVLLjthxJbjV/Vs0yyxjFMY5Wub29UnkPFTpLynl2dcuStl2qRcnU3dgxr2J8ptZsk/hWZB2nbtrqawYUSHU+IjR2mQfrDda6oNH6P5CeyRsjhmio3LcL0dk0qRYMUoCGo+IcrGmK1rkcsViBqBqpEREBRV6QfmSPfOJ9w8pVXlIix5dOHIZafpqDgdpVyuo8DhsCNR5UGjdFv1f7J9jL93Prfl5ssMxmw2y22y3Xwo3WtKDU68q1AA58+S9EBQn1h6dbrJ3FjNuXKuXnx+FaSwx8ubR9ODKYr43vQAVvQakitSAeamxEEI5f8ASH24M1j5i26ZEmtDA65Fbq41e9eRsWXLtusk99PX0PesrevSJy7Hj3G0w50+UQQ2Hm6x2BY+BvbHZ0jX+GtNT4ahSjuOXNj3e2KftW3TbfpyIjDt/wD1Xobf815QMp5d2u4chbNtcVweDjMOPS4+q4piH9KCIejmSt6l77Kzpv7TjDr5fvGbdqaOuuy9eJJ4Z9ZtoUtajQOmuLUcgNZ2REBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB/9k=';
+
+    let currentStep = 0;
+    const formData = {
+      session_id: null,
+      dia_reunion: '',
+      hora_inicio: '',
+      hora_cierre: '',
+      casa: '',
+      total_asistentes: '',
+      hombres: '',
+      mujeres: '',
+      ninos: '',
+      lista_asistentes: '',
+      hubo_visitantes_nuevos: '',
+      nombres_telefonos_visitas: '',
+      visitantes_segunda_vez: '',
+      uso_material: '',
+      eventos_especiales: '',
+      necesidades_oracion: '',
+      necesidades_pastorales: '',
+      observaciones: '',
+      step_reached: 1,
+      completed: false,
+      started_at: null,
+      last_updated: null
+    };
+
+    function initForm() {
+      formData.session_id = crypto.randomUUID();
+      formData.started_at = new Date().toISOString();
+      currentStep = 0;
+      saveFormData();
+      render();
+    }
+
+    function saveFormData() {
+      sessionStorage.setItem('tym_casas_form_data', JSON.stringify(formData));
+    }
+
+    function loadFormData() {
+      const saved = sessionStorage.getItem('tym_casas_form_data');
+      if (saved) {
+        try {
+          Object.assign(formData, JSON.parse(saved));
+        } catch (e) {
+          console.error('Error loading form data:', e);
+        }
+      }
+    }
+
+    function postData() {
+      formData.last_updated = new Date().toISOString();
+      const payload = JSON.stringify(formData);
+      fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      }).catch(() => {});
+    }
+
+    function goToStep(step) {
+      currentStep = step;
+      formData.step_reached = Math.max(formData.step_reached, step);
+      saveFormData();
+      if (step > 0) {
+        postData();
+      }
+      render();
+    }
+
+    function nextStep() {
+      // Special branching logic for step 10
+      if (currentStep === 10 && formData.hubo_visitantes_nuevos === 'No') {
+        goToStep(13);
+      } else {
+        goToStep(currentStep + 1);
+      }
+    }
+
+    function resetForm() {
+      formData.session_id = crypto.randomUUID();
+      formData.dia_reunion = '';
+      formData.hora_inicio = '';
+      formData.hora_cierre = '';
+      formData.casa = '';
+      formData.total_asistentes = '';
+      formData.hombres = '';
+      formData.mujeres = '';
+      formData.ninos = '';
+      formData.lista_asistentes = '';
+      formData.hubo_visitantes_nuevos = '';
+      formData.nombres_telefonos_visitas = '';
+      formData.visitantes_segunda_vez = '';
+      formData.uso_material = '';
+      formData.eventos_especiales = '';
+      formData.necesidades_oracion = '';
+      formData.necesidades_pastorales = '';
+      formData.observaciones = '';
+      formData.step_reached = 0;
+      formData.completed = false;
+      formData.started_at = new Date().toISOString();
+      formData.last_updated = null;
+      currentStep = 0;
+      saveFormData();
+      render();
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function handleCheckboxChange(fieldName, option, checked) {
+      if (!formData[fieldName]) {
+        formData[fieldName] = '';
+      }
+      const current = formData[fieldName].split(', ').filter(v => v && !v.startsWith(option));
+      if (checked) {
+        current.push(option);
+      }
+      formData[fieldName] = current.join(', ');
+    }
+
+    function handleCheckboxOtroText(fieldName, textInputId) {
+      const textInput = document.getElementById(textInputId);
+      if (textInput && textInput.value.trim()) {
+        if (!formData[fieldName]) {
+          formData[fieldName] = '';
+        }
+        // Remove old "Otro:" entry if exists
+        const current = formData[fieldName].split(', ').filter(v => !v.startsWith('Otro:'));
+        current.push(`Otro: ${textInput.value.trim()}`);
+        formData[fieldName] = current.join(', ');
+      }
+    }
+
+    function render() {
+      const app = document.getElementById('app');
+
+      if (currentStep === 0) {
+        app.innerHTML = `
+          <div class="screen active">
+            <div class="screen-content">
+              <img class="logo" src="${LOGO_DATA_URI}" alt="Trigo y Miel San Luis Potosí">
+              <h1>Reporte de Casas de Esperanza</h1>
+              <p class="subtitle">Completa el reporte de tu reunión.</p>
+              <div class="welcome-buttons">
+                <button class="btn-primary" onclick="nextStep()">Comenzar</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 1) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">1 de 17</div>
+            <div class="screen-content">
+              <h1>Día de la reunión</h1>
+              <div class="day-buttons">
+                <button class="btn-secondary day-button" onclick="setDia('Lunes')">Lunes</button>
+                <button class="btn-secondary day-button" onclick="setDia('Martes')">Martes</button>
+                <button class="btn-secondary day-button" onclick="setDia('Miércoles')">Miércoles</button>
+                <button class="btn-secondary day-button" onclick="setDia('Jueves')">Jueves</button>
+                <button class="btn-secondary day-button" onclick="setDia('Viernes')">Viernes</button>
+                <button class="btn-secondary day-button" onclick="setDia('Sábado')">Sábado</button>
+                <button class="btn-secondary day-button" onclick="setDia('Domingo')">Domingo</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 2) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">2 de 17</div>
+            <div class="screen-content">
+              <h1>Hora de inicio</h1>
+              <form onsubmit="return submitTimeStart(event)">
+                <div class="form-group">
+                  <input type="time" id="hora_inicio" value="${formData.hora_inicio}" required autofocus>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('hora_inicio');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 3) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">3 de 17</div>
+            <div class="screen-content">
+              <h1>Hora de cierre</h1>
+              <form onsubmit="return submitTimeEnd(event)">
+                <div class="form-group">
+                  <input type="time" id="hora_cierre" value="${formData.hora_cierre}" required autofocus>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('hora_cierre');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 4) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">4 de 17</div>
+            <div class="screen-content">
+              <h1>Casa</h1>
+              <form onsubmit="return submitCasa(event)">
+                <div class="form-group">
+                  <select id="casa" required autofocus>
+                    <option value="">Selecciona una casa</option>
+                    <option value="Chuks Joseph" ${formData.casa === 'Chuks Joseph' ? 'selected' : ''}>Chuks Joseph</option>
+                    <option value="Luis Alvarez" ${formData.casa === 'Luis Alvarez' ? 'selected' : ''}>Luis Alvarez</option>
+                    <option value="Juan Manuel Lopez" ${formData.casa === 'Juan Manuel Lopez' ? 'selected' : ''}>Juan Manuel Lopez</option>
+                    <option value="Marina Flores" ${formData.casa === 'Marina Flores' ? 'selected' : ''}>Marina Flores</option>
+                    <option value="Sergio Ernesto Hernandez" ${formData.casa === 'Sergio Ernesto Hernandez' ? 'selected' : ''}>Sergio Ernesto Hernandez</option>
+                    <option value="Emmanuel Ochia" ${formData.casa === 'Emmanuel Ochia' ? 'selected' : ''}>Emmanuel Ochia</option>
+                    <option value="Mayela Aquino" ${formData.casa === 'Mayela Aquino' ? 'selected' : ''}>Mayela Aquino</option>
+                    <option value="Sergio Abraham" ${formData.casa === 'Sergio Abraham' ? 'selected' : ''}>Sergio Abraham</option>
+                    <option value="Jose y Erika Alvarez" ${formData.casa === 'Jose y Erika Alvarez' ? 'selected' : ''}>Jose y Erika Alvarez</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('casa');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 5) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">5 de 17</div>
+            <div class="screen-content">
+              <h1>Número total de asistentes</h1>
+              <form onsubmit="return submitNumber('total_asistentes', event)">
+                <div class="form-group">
+                  <input type="number" id="total_asistentes" value="${formData.total_asistentes}" min="0" required autofocus>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('total_asistentes');
+          if (input) { input.focus(); input.select(); }
+        }, 100);
+      } else if (currentStep === 6) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">6 de 17</div>
+            <div class="screen-content">
+              <h1>Hombres</h1>
+              <form onsubmit="return submitNumber('hombres', event)">
+                <div class="form-group">
+                  <input type="number" id="hombres" value="${formData.hombres}" min="0" required autofocus>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('hombres');
+          if (input) { input.focus(); input.select(); }
+        }, 100);
+      } else if (currentStep === 7) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">7 de 17</div>
+            <div class="screen-content">
+              <h1>Mujeres</h1>
+              <form onsubmit="return submitNumber('mujeres', event)">
+                <div class="form-group">
+                  <input type="number" id="mujeres" value="${formData.mujeres}" min="0" required autofocus>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('mujeres');
+          if (input) { input.focus(); input.select(); }
+        }, 100);
+      } else if (currentStep === 8) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">8 de 17</div>
+            <div class="screen-content">
+              <h1>Niños</h1>
+              <form onsubmit="return submitNumber('ninos', event)">
+                <div class="form-group">
+                  <input type="number" id="ninos" value="${formData.ninos}" min="0" required autofocus>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('ninos');
+          if (input) { input.focus(); input.select(); }
+        }, 100);
+      } else if (currentStep === 9) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">9 de 17</div>
+            <div class="screen-content">
+              <h1>Lista de asistentes</h1>
+              <form onsubmit="return submitTextarea('lista_asistentes', event)">
+                <div class="form-group">
+                  <textarea id="lista_asistentes" placeholder="Agrega una lista de los asistentes que recibiste (opcional)">${escapeHtml(formData.lista_asistentes)}</textarea>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('lista_asistentes');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 10) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">10 de 17</div>
+            <div class="screen-content">
+              <h1>¿Hubo visitantes nuevos?</h1>
+              <div class="button-group-horizontal">
+                <button class="btn-primary" onclick="setVisitors('Sí')">Sí</button>
+                <button class="btn-secondary" onclick="setVisitors('No')">No</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 11) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">11 de 17</div>
+            <div class="screen-content">
+              <h1>Nombres y teléfonos de visitas</h1>
+              <form onsubmit="return submitTextarea('nombres_telefonos_visitas', event)">
+                <div class="form-group">
+                  <textarea id="nombres_telefonos_visitas" placeholder="Agrega una lista de las visitas que recibiste y si dejaron su contacto">${escapeHtml(formData.nombres_telefonos_visitas)}</textarea>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('nombres_telefonos_visitas');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 12) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">12 de 17</div>
+            <div class="screen-content">
+              <h1>¿Cuántos regresaron por segunda vez?</h1>
+              <form onsubmit="return submitNumber('visitantes_segunda_vez', event)">
+                <div class="form-group">
+                  <input type="number" id="visitantes_segunda_vez" value="${formData.visitantes_segunda_vez}" min="0" placeholder="0 si ninguno" required autofocus>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('visitantes_segunda_vez');
+          if (input) { input.focus(); input.select(); }
+        }, 100);
+      } else if (currentStep === 13) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">13 de 17</div>
+            <div class="screen-content">
+              <h1>¿Se usó el material proporcionado?</h1>
+              <div class="button-group-horizontal">
+                <button class="btn-primary" onclick="setMaterial('Sí')">Sí</button>
+                <button class="btn-secondary" onclick="setMaterial('No')">No</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 14) {
+        const eventosChecked = (formData.eventos_especiales || '').split(', ').filter(v => v);
+        const otroChecked = eventosChecked.some(v => v.startsWith('Otro:'));
+        const otroText = otroChecked ? eventosChecked.find(v => v.startsWith('Otro:'))?.replace('Otro: ', '') || '' : '';
+
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">14 de 17</div>
+            <div class="screen-content">
+              <h1>Eventos especiales</h1>
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input type="checkbox" id="evento_salvaciones" ${eventosChecked.includes('Salvaciones') ? 'checked' : ''} onchange="updateCheckboxGroup('eventos_especiales', 'Salvaciones', this.checked)">
+                  <label for="evento_salvaciones">Salvaciones</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="evento_testimonios" ${eventosChecked.includes('Testimonios') ? 'checked' : ''} onchange="updateCheckboxGroup('eventos_especiales', 'Testimonios', this.checked)">
+                  <label for="evento_testimonios">Testimonios</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="evento_cumpleanos" ${eventosChecked.includes('Cumpleaños') ? 'checked' : ''} onchange="updateCheckboxGroup('eventos_especiales', 'Cumpleaños', this.checked)">
+                  <label for="evento_cumpleanos">Cumpleaños</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="evento_reconciliaciones" ${eventosChecked.includes('Reconciliaciones') ? 'checked' : ''} onchange="updateCheckboxGroup('eventos_especiales', 'Reconciliaciones', this.checked)">
+                  <label for="evento_reconciliaciones">Reconciliaciones</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="evento_otro" ${otroChecked ? 'checked' : ''} onchange="toggleOtroText('evento_otro_text', this.checked)">
+                  <label for="evento_otro">Otro</label>
+                </div>
+                <div id="evento_otro_text" class="checkbox-text-input ${otroChecked ? 'show' : ''}">
+                  <input type="text" placeholder="Especifica" value="${escapeHtml(otroText)}" onchange="updateOtroField('eventos_especiales', this.value)">
+                </div>
+              </div>
+              <div class="button-group">
+                <button class="btn-primary" onclick="nextStep()">Siguiente</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 15) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">15 de 17</div>
+            <div class="screen-content">
+              <h1>Necesidades de oración</h1>
+              <form onsubmit="return submitTextarea('necesidades_oracion', event)">
+                <div class="form-group">
+                  <textarea id="necesidades_oracion" placeholder="Detalles (opcional)">${escapeHtml(formData.necesidades_oracion)}</textarea>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('necesidades_oracion');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 16) {
+        const pastoralChecked = (formData.necesidades_pastorales || '').split(', ').filter(v => v);
+        const otroChecked = pastoralChecked.some(v => v.startsWith('Otro:'));
+        const otroText = otroChecked ? pastoralChecked.find(v => v.startsWith('Otro:'))?.replace('Otro: ', '') || '' : '';
+
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">16 de 17</div>
+            <div class="screen-content">
+              <h1>Necesidades pastorales</h1>
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input type="checkbox" id="pastoral_consejeria" ${pastoralChecked.includes('Consejería') ? 'checked' : ''} onchange="updateCheckboxGroup('necesidades_pastorales', 'Consejería', this.checked)">
+                  <label for="pastoral_consejeria">Consejería</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="pastoral_enfermedad" ${pastoralChecked.includes('Enfermedad') ? 'checked' : ''} onchange="updateCheckboxGroup('necesidades_pastorales', 'Enfermedad', this.checked)">
+                  <label for="pastoral_enfermedad">Enfermedad</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="pastoral_situacion_familiar" ${pastoralChecked.includes('Situación familiar') ? 'checked' : ''} onchange="updateCheckboxGroup('necesidades_pastorales', 'Situación familiar', this.checked)">
+                  <label for="pastoral_situacion_familiar">Situación familiar</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="pastoral_crisis_emocional" ${pastoralChecked.includes('Crisis emocional') ? 'checked' : ''} onchange="updateCheckboxGroup('necesidades_pastorales', 'Crisis emocional', this.checked)">
+                  <label for="pastoral_crisis_emocional">Crisis emocional</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="pastoral_seguimiento" ${pastoralChecked.includes('Seguimiento pastoral') ? 'checked' : ''} onchange="updateCheckboxGroup('necesidades_pastorales', 'Seguimiento pastoral', this.checked)">
+                  <label for="pastoral_seguimiento">Seguimiento pastoral</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="pastoral_otro" ${otroChecked ? 'checked' : ''} onchange="toggleOtroText('pastoral_otro_text', this.checked)">
+                  <label for="pastoral_otro">Otro</label>
+                </div>
+                <div id="pastoral_otro_text" class="checkbox-text-input ${otroChecked ? 'show' : ''}">
+                  <input type="text" placeholder="Especifica" value="${escapeHtml(otroText)}" onchange="updateOtroField('necesidades_pastorales', this.value)">
+                </div>
+              </div>
+              <div class="button-group">
+                <button class="btn-primary" onclick="nextStep()">Siguiente</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 17) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">17 de 17</div>
+            <div class="screen-content">
+              <h1>Observaciones</h1>
+              <form onsubmit="return submitFinal(event)">
+                <div class="form-group">
+                  <textarea id="observaciones" placeholder="Detalles (opcional)">${escapeHtml(formData.observaciones)}</textarea>
+                </div>
+                <button type="submit" class="btn-primary">Terminar</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('observaciones');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 18) {
+        app.innerHTML = `
+          <div class="screen active">
+            <div class="screen-content">
+              <img class="logo" src="${LOGO_DATA_URI}" alt="Trigo y Miel San Luis Potosí">
+              <h1 class="final-message">Registro completado</h1>
+              <div class="welcome-buttons">
+                <button class="btn-primary" onclick="resetForm()">Registrar otra reunión</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function setDia(dia) {
+      formData.dia_reunion = dia;
+      nextStep();
+    }
+
+    function setVisitors(value) {
+      formData.hubo_visitantes_nuevos = value;
+      nextStep();
+    }
+
+    function setMaterial(value) {
+      formData.uso_material = value;
+      nextStep();
+    }
+
+    function submitTimeStart(e) {
+      e.preventDefault();
+      formData.hora_inicio = document.getElementById('hora_inicio').value;
+      nextStep();
+      return false;
+    }
+
+    function submitTimeEnd(e) {
+      e.preventDefault();
+      formData.hora_cierre = document.getElementById('hora_cierre').value;
+      nextStep();
+      return false;
+    }
+
+    function submitCasa(e) {
+      e.preventDefault();
+      const casa = document.getElementById('casa').value;
+      if (casa) {
+        formData.casa = casa;
+        nextStep();
+      }
+      return false;
+    }
+
+    function submitNumber(fieldName, e) {
+      e.preventDefault();
+      const value = document.getElementById(fieldName).value.trim();
+      if (value !== '') {
+        formData[fieldName] = value;
+      }
+      nextStep();
+      return false;
+    }
+
+    function submitTextarea(fieldName, e) {
+      e.preventDefault();
+      formData[fieldName] = document.getElementById(fieldName).value.trim();
+      nextStep();
+      return false;
+    }
+
+    function updateCheckboxGroup(fieldName, option, checked) {
+      handleCheckboxChange(fieldName, option, checked);
+      postData();
+    }
+
+    function toggleOtroText(elementId, show) {
+      const elem = document.getElementById(elementId);
+      if (show) {
+        elem.classList.add('show');
+      } else {
+        elem.classList.remove('show');
+        // Clear the text input
+        const input = elem.querySelector('input[type="text"]');
+        if (input) input.value = '';
+      }
+    }
+
+    function updateOtroField(fieldName, text) {
+      // Remove old "Otro:" entry and add new one
+      const current = (formData[fieldName] || '').split(', ').filter(v => !v.startsWith('Otro:'));
+      if (text.trim()) {
+        current.push(`Otro: ${text.trim()}`);
+      }
+      formData[fieldName] = current.join(', ');
+      postData();
+    }
+
+    function submitFinal(e) {
+      e.preventDefault();
+      formData.observaciones = document.getElementById('observaciones').value.trim();
+      formData.completed = true;
+      formData.last_updated = new Date().toISOString();
+      saveFormData();
+      postData();
+      currentStep = 18;
+      render();
+      return false;
+    }
+
+    // Initialize on page load
+    window.addEventListener('load', () => {
+      loadFormData();
+      if (!formData.session_id || formData.completed) {
+        initForm();
+      } else {
+        currentStep = formData.step_reached || 0;
+        render();
+      }
+    });
+
+    // Handle page visibility to refresh on return
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        render();
+      }
+    });
+  </script>
+</body>
+</html>
