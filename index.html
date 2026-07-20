@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Iglesia Trigo y Miel - Registro de Visitantes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Raleway', sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    :root {
+      --gold: #E0C34B;
+      --bronze: #AB9256;
+      --coral: #C87F7F;
+      --charcoal: #323e45;
+      --warm-gray: #7A7A7A;
+      --bg-warm: #faf8f4;
+
+      --text-primary: var(--charcoal);
+      --text-secondary: var(--warm-gray);
+      --bg-primary: var(--bg-warm);
+      --bg-secondary: #ffffff;
+      --button-primary: var(--coral);
+      --border-color: var(--bronze);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-primary: #f5f1ed;
+        --text-secondary: #c0b5a8;
+        --bg-primary: #2d2520;
+        --bg-secondary: #3a3228;
+        --button-primary: #e8a4a4;
+        --border-color: #8b7b6b;
+      }
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #app {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-in-out;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
+    }
+
+    .screen-content {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+      letter-spacing: 0.8px;
+      background-color: var(--bg-primary);
+      z-index: 10;
+      font-weight: 500;
+    }
+
+    .screen-with-progress {
+      padding-top: 60px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      width: 100%;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 16px;
+      color: var(--text-primary);
+      background-color: var(--bg-secondary);
+      transition: border-color 0.3s, box-shadow 0.3s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    input[type="email"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--button-primary);
+      box-shadow: 0 0 0 3px rgba(200, 127, 127, 0.15);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: none;
+      font-size: 15px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 28px;
+      width: 100%;
+    }
+
+    .button-group-horizontal {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 28px;
+      width: 100%;
+    }
+
+    @media (min-width: 480px) {
+      .button-group-horizontal {
+        flex-direction: row;
+        gap: 12px;
+      }
+
+      .button-group-horizontal button {
+        flex: 1;
+      }
+    }
+
+    button {
+      padding: 16px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Raleway', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-primary {
+      background-color: var(--button-primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-primary);
+      border: 2px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-secondary);
+      border-color: var(--button-primary);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:active {
+      background-color: rgba(200, 127, 127, 0.1);
+      transform: scale(0.98);
+    }
+
+    .final-message {
+      font-size: 28px;
+      margin-bottom: 40px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .welcome-buttons {
+      margin-top: 32px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 28px;
+        margin-bottom: 16px;
+      }
+
+      .subtitle {
+        font-size: 15px;
+        margin-bottom: 28px;
+      }
+
+      .final-message {
+        font-size: 24px;
+        margin-bottom: 32px;
+      }
+
+      .progress-bar {
+        padding: 14px 16px;
+        font-size: 12px;
+      }
+
+      .screen-with-progress {
+        padding-top: 56px;
+      }
+    }
+
+    @media (max-height: 600px) {
+      .screen-content {
+        transform: scale(0.9);
+        transform-origin: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const API_ENDPOINT = 'http://192.168.1.83:30109/webhook/tym-visitor';
+
+    let currentStep = 0;
+    const formData = {
+      session_id: null,
+      nombre: '',
+      telefono: '',
+      correo: '',
+      primera_vez: null,
+      ubicacion: null,
+      situacion_fe: null,
+      invitado_por: '',
+      peticion_oracion: '',
+      step_reached: 0,
+      completed: false,
+      started_at: null,
+      last_updated: null
+    };
+
+    function initForm() {
+      formData.session_id = crypto.randomUUID();
+      formData.started_at = new Date().toISOString();
+      currentStep = 0;
+      saveFormData();
+      render();
+    }
+
+    function saveFormData() {
+      sessionStorage.setItem('tym_form_data', JSON.stringify(formData));
+    }
+
+    function loadFormData() {
+      const saved = sessionStorage.getItem('tym_form_data');
+      if (saved) {
+        try {
+          Object.assign(formData, JSON.parse(saved));
+        } catch (e) {
+          console.error('Error loading form data:', e);
+        }
+      }
+    }
+
+    function postData() {
+      formData.last_updated = new Date().toISOString();
+      const payload = JSON.stringify(formData);
+      fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      }).catch(() => {});
+    }
+
+    function goToStep(step) {
+      currentStep = step;
+      formData.step_reached = step;
+      saveFormData();
+      if (step > 0) {
+        postData();
+      }
+      render();
+    }
+
+    function nextStep() {
+      goToStep(currentStep + 1);
+    }
+
+    function resetForm() {
+      formData.session_id = crypto.randomUUID();
+      formData.nombre = '';
+      formData.telefono = '';
+      formData.correo = '';
+      formData.primera_vez = null;
+      formData.ubicacion = null;
+      formData.situacion_fe = null;
+      formData.invitado_por = '';
+      formData.peticion_oracion = '';
+      formData.step_reached = 0;
+      formData.completed = false;
+      formData.started_at = new Date().toISOString();
+      formData.last_updated = null;
+      currentStep = 0;
+      saveFormData();
+      render();
+    }
+
+    function render() {
+      const app = document.getElementById('app');
+
+      if (currentStep === 0) {
+        app.innerHTML = `
+          <div class="screen active">
+            <div class="screen-content">
+              <h1>¡Nos alegra que estés aquí!</h1>
+              <p class="subtitle">Cuéntanos un poco de ti — toma menos de un minuto.</p>
+              <div class="welcome-buttons">
+                <button class="btn-primary" onclick="nextStep()">Comenzar</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 1) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">1 de 7</div>
+            <div class="screen-content">
+              <h1>¿Cómo te llamas?</h1>
+              <form onsubmit="return submitName(event)">
+                <div class="form-group">
+                  <input type="text" id="nombre" value="${escapeHtml(formData.nombre)}" placeholder="Tu nombre" required autofocus maxlength="100">
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('nombre');
+          if (input) {
+            input.focus();
+            input.select();
+          }
+        }, 100);
+      } else if (currentStep === 2) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">2 de 7</div>
+            <div class="screen-content">
+              <h1>¿Cómo te podemos contactar?</h1>
+              <form onsubmit="return submitContact(event)">
+                <div class="form-group">
+                  <label>Teléfono (requerido)</label>
+                  <input type="tel" id="telefono" value="${escapeHtml(formData.telefono)}" placeholder="Tu teléfono" required maxlength="20">
+                </div>
+                <div class="form-group">
+                  <label>Correo (opcional)</label>
+                  <input type="email" id="correo" value="${escapeHtml(formData.correo)}" placeholder="Tu correo" maxlength="100">
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('telefono');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 3) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">3 de 7</div>
+            <div class="screen-content">
+              <h1>¿Es tu primera vez visitándonos?</h1>
+              <div class="button-group-horizontal">
+                <button class="btn-primary" onclick="setFirstVisit(true)">Sí</button>
+                <button class="btn-secondary" onclick="setFirstVisit(false)">No</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 4) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">4 de 7</div>
+            <div class="screen-content">
+              <h1>¿Vives en San Luis Potosí o estás de visita en la ciudad?</h1>
+              <div class="button-group-horizontal">
+                <button class="btn-primary" onclick="setLocation('vivo_aqui')">Vivo aquí</button>
+                <button class="btn-secondary" onclick="setLocation('visita')">Estoy de visita</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 5) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">5 de 7</div>
+            <div class="screen-content">
+              <h1>¿Ya asistes a una iglesia y buscas un nuevo lugar, o es tu primer acercamiento a la fe?</h1>
+              <div class="button-group">
+                <button class="btn-primary" onclick="setFaith('cristiano_busco')">Ya soy cristiano/a y busco iglesia</button>
+                <button class="btn-secondary" onclick="setFaith('primer_acercamiento')">Es mi primer acercamiento</button>
+                <button class="btn-secondary" onclick="setFaith('prefiero_no_decir')">Prefiero no decir</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentStep === 6) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">6 de 7</div>
+            <div class="screen-content">
+              <h1>¿Alguien te invitó hoy?</h1>
+              <form onsubmit="return submitInvitedBy(event)">
+                <div class="form-group">
+                  <input type="text" id="invitado_por" value="${escapeHtml(formData.invitado_por)}" placeholder="Nombre de la persona (opcional)" maxlength="100">
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('invitado_por');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 7) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">7 de 7</div>
+            <div class="screen-content">
+              <h1>¿Hay algo por lo que podamos orar por ti?</h1>
+              <form onsubmit="return submitPrayer(event)">
+                <div class="form-group">
+                  <textarea id="peticion_oracion" placeholder="Tu petición de oración (opcional)">${escapeHtml(formData.peticion_oracion)}</textarea>
+                </div>
+                <button type="submit" class="btn-primary">Terminar</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('peticion_oracion');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 8) {
+        app.innerHTML = `
+          <div class="screen active">
+            <div class="screen-content">
+              <h1 class="final-message">¡Gracias! Un gusto conocerte.</h1>
+              <div class="welcome-buttons">
+                <button class="btn-primary" onclick="resetForm()">Registrar a otra persona</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function submitName(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value.trim();
+      if (nombre) {
+        formData.nombre = nombre;
+        nextStep();
+      }
+      return false;
+    }
+
+    function submitContact(e) {
+      e.preventDefault();
+      const telefono = document.getElementById('telefono').value.trim();
+      const correo = document.getElementById('correo').value.trim();
+      if (telefono) {
+        formData.telefono = telefono;
+        formData.correo = correo;
+        nextStep();
+      }
+      return false;
+    }
+
+    function setFirstVisit(value) {
+      formData.primera_vez = value;
+      nextStep();
+    }
+
+    function setLocation(value) {
+      formData.ubicacion = value;
+      nextStep();
+    }
+
+    function setFaith(value) {
+      formData.situacion_fe = value;
+      nextStep();
+    }
+
+    function submitInvitedBy(e) {
+      e.preventDefault();
+      formData.invitado_por = document.getElementById('invitado_por').value.trim();
+      nextStep();
+      return false;
+    }
+
+    function submitPrayer(e) {
+      e.preventDefault();
+      formData.peticion_oracion = document.getElementById('peticion_oracion').value.trim();
+      formData.completed = true;
+      formData.last_updated = new Date().toISOString();
+      saveFormData();
+      postData();
+      currentStep = 8;
+      render();
+      return false;
+    }
+
+    // Initialize on page load
+    window.addEventListener('load', () => {
+      loadFormData();
+      if (!formData.session_id || formData.completed) {
+        initForm();
+      } else {
+        currentStep = formData.step_reached || 0;
+        render();
+      }
+    });
+
+    // Handle page visibility to refresh on return
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        render();
+      }
+    });
+  </script>
+</body>
+</html>
