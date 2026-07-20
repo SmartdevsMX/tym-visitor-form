@@ -409,8 +409,8 @@
         app.innerHTML = `
           <div class="screen active">
             <div class="screen-content">
-              <h1>¡Nos alegra que estés aquí!</h1>
-              <p class="subtitle">Cuéntanos un poco de ti — toma menos de un minuto.</p>
+              <h1>Registro de visitantes</h1>
+              <p class="subtitle">Completa los datos de la persona — toma menos de un minuto.</p>
               <div class="welcome-buttons">
                 <button class="btn-primary" onclick="nextStep()">Comenzar</button>
               </div>
@@ -422,10 +422,10 @@
           <div class="screen active screen-with-progress">
             <div class="progress-bar">1 de 7</div>
             <div class="screen-content">
-              <h1>¿Cómo te llamas?</h1>
+              <h1>Nombre completo</h1>
               <form onsubmit="return submitName(event)">
                 <div class="form-group">
-                  <input type="text" id="nombre" value="${escapeHtml(formData.nombre)}" placeholder="Tu nombre" required autofocus maxlength="100">
+                  <input type="text" id="nombre" value="${escapeHtml(formData.nombre)}" placeholder="Nombre de la visita" required autofocus maxlength="100">
                 </div>
                 <button type="submit" class="btn-primary">Siguiente</button>
               </form>
@@ -444,15 +444,15 @@
           <div class="screen active screen-with-progress">
             <div class="progress-bar">2 de 7</div>
             <div class="screen-content">
-              <h1>¿Cómo te podemos contactar?</h1>
+              <h1>Datos de contacto</h1>
               <form onsubmit="return submitContact(event)">
                 <div class="form-group">
                   <label>Teléfono (requerido)</label>
-                  <input type="tel" id="telefono" value="${escapeHtml(formData.telefono)}" placeholder="Tu teléfono" required maxlength="20">
+                  <input type="tel" id="telefono" value="${escapeHtml(formData.telefono)}" placeholder="Teléfono" required maxlength="20">
                 </div>
                 <div class="form-group">
                   <label>Correo (opcional)</label>
-                  <input type="email" id="correo" value="${escapeHtml(formData.correo)}" placeholder="Tu correo" maxlength="100">
+                  <input type="email" id="correo" value="${escapeHtml(formData.correo)}" placeholder="Correo" maxlength="100">
                 </div>
                 <button type="submit" class="btn-primary">Siguiente</button>
               </form>
@@ -468,7 +468,7 @@
           <div class="screen active screen-with-progress">
             <div class="progress-bar">3 de 7</div>
             <div class="screen-content">
-              <h1>¿Es tu primera vez visitándonos?</h1>
+              <h1>Primera visita</h1>
               <div class="button-group-horizontal">
                 <button class="btn-primary" onclick="setFirstVisit('Sí')">Sí</button>
                 <button class="btn-secondary" onclick="setFirstVisit('No')">No</button>
@@ -481,10 +481,10 @@
           <div class="screen active screen-with-progress">
             <div class="progress-bar">4 de 7</div>
             <div class="screen-content">
-              <h1>¿Vives en San Luis Potosí o estás de visita en la ciudad?</h1>
+              <h1>Ubicación</h1>
               <div class="button-group-horizontal">
-                <button class="btn-primary" onclick="setLocation('Vivo aquí')">Vivo aquí</button>
-                <button class="btn-secondary" onclick="setLocation('Estoy de visita')">Estoy de visita</button>
+                <button class="btn-primary" onclick="setLocation('Vive en San Luis Potosí')">Vive en San Luis Potosí</button>
+                <button class="btn-secondary" onclick="setLocation('Está de visita en la ciudad')">Está de visita en la ciudad</button>
               </div>
             </div>
           </div>
@@ -494,11 +494,11 @@
           <div class="screen active screen-with-progress">
             <div class="progress-bar">5 de 7</div>
             <div class="screen-content">
-              <h1>¿Ya asistes a una iglesia y buscas un nuevo lugar, o es tu primer acercamiento a la fe?</h1>
+              <h1>Situación de fe</h1>
               <div class="button-group">
-                <button class="btn-primary" onclick="setFaith('Ya soy cristiano/a y busco iglesia')">Ya soy cristiano/a y busco iglesia</button>
-                <button class="btn-secondary" onclick="setFaith('Es mi primer acercamiento')">Es mi primer acercamiento</button>
-                <button class="btn-secondary" onclick="setFaith('Prefiero no decir')">Prefiero no decir</button>
+                <button class="btn-primary" onclick="setFaith('Ya asiste a una iglesia y busca un nuevo lugar')">Ya asiste a una iglesia y busca un nuevo lugar</button>
+                <button class="btn-secondary" onclick="setFaith('Es su primer acercamiento a la fe')">Es su primer acercamiento a la fe</button>
+                <button class="btn-secondary" onclick="setFaith('Prefiere no decir')">Prefiere no decir</button>
               </div>
             </div>
           </div>
@@ -508,10 +508,10 @@
           <div class="screen active screen-with-progress">
             <div class="progress-bar">6 de 7</div>
             <div class="screen-content">
-              <h1>¿Alguien te invitó hoy?</h1>
+              <h1>Invitado por</h1>
               <form onsubmit="return submitInvitedBy(event)">
                 <div class="form-group">
-                  <input type="text" id="invitado_por" value="${escapeHtml(formData.invitado_por)}" placeholder="Nombre de la persona (opcional)" maxlength="100">
+                  <input type="text" id="invitado_por" value="${escapeHtml(formData.invitado_por)}" placeholder="Nombre (opcional)" maxlength="100">
                 </div>
                 <button type="submit" class="btn-primary">Siguiente</button>
               </form>
@@ -527,10 +527,10 @@
           <div class="screen active screen-with-progress">
             <div class="progress-bar">7 de 7</div>
             <div class="screen-content">
-              <h1>¿Hay algo por lo que podamos orar por ti?</h1>
+              <h1>Petición de oración</h1>
               <form onsubmit="return submitPrayer(event)">
                 <div class="form-group">
-                  <textarea id="peticion_oracion" placeholder="Tu petición de oración (opcional)">${escapeHtml(formData.peticion_oracion)}</textarea>
+                  <textarea id="peticion_oracion" placeholder="Detalles (opcional)">${escapeHtml(formData.peticion_oracion)}</textarea>
                 </div>
                 <button type="submit" class="btn-primary">Terminar</button>
               </form>
@@ -545,7 +545,7 @@
         app.innerHTML = `
           <div class="screen active">
             <div class="screen-content">
-              <h1 class="final-message">¡Gracias! Un gusto conocerte.</h1>
+              <h1 class="final-message">Registro completado</h1>
               <div class="welcome-buttons">
                 <button class="btn-primary" onclick="resetForm()">Registrar a otra persona</button>
               </div>
