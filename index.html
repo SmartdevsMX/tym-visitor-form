@@ -433,7 +433,7 @@
       } else if (currentStep === 1) {
         app.innerHTML = `
           <div class="screen active screen-with-progress">
-            <div class="progress-bar">1 de 7</div>
+            <div class="progress-bar">1 de 8</div>
             <div class="screen-content">
               <h1>Nombre completo</h1>
               <form onsubmit="return submitName(event)">
@@ -455,17 +455,12 @@
       } else if (currentStep === 2) {
         app.innerHTML = `
           <div class="screen active screen-with-progress">
-            <div class="progress-bar">2 de 7</div>
+            <div class="progress-bar">2 de 8</div>
             <div class="screen-content">
-              <h1>Datos de contacto</h1>
-              <form onsubmit="return submitContact(event)">
+              <h1>Teléfono</h1>
+              <form onsubmit="return submitTelefono(event)">
                 <div class="form-group">
-                  <label>Teléfono (requerido)</label>
-                  <input type="tel" id="telefono" value="${escapeHtml(formData.telefono)}" placeholder="Teléfono" required maxlength="20">
-                </div>
-                <div class="form-group">
-                  <label>Correo (opcional)</label>
-                  <input type="email" id="correo" value="${escapeHtml(formData.correo)}" placeholder="Correo" maxlength="100">
+                  <input type="tel" id="telefono" value="${escapeHtml(formData.telefono)}" placeholder="Teléfono" required autofocus maxlength="20">
                 </div>
                 <button type="submit" class="btn-primary">Siguiente</button>
               </form>
@@ -479,7 +474,27 @@
       } else if (currentStep === 3) {
         app.innerHTML = `
           <div class="screen active screen-with-progress">
-            <div class="progress-bar">3 de 7</div>
+            <div class="progress-bar">3 de 8</div>
+            <div class="screen-content">
+              <h1>Correo</h1>
+              <form onsubmit="return submitCorreo(event)">
+                <div class="form-group">
+                  <input type="email" id="correo" value="${escapeHtml(formData.correo)}" placeholder="Correo (opcional)" autofocus maxlength="100">
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+                <button type="button" class="btn-secondary" style="margin-top: 12px;" onclick="skipCorreo()">Omitir</button>
+              </form>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('correo');
+          if (input) input.focus();
+        }, 100);
+      } else if (currentStep === 4) {
+        app.innerHTML = `
+          <div class="screen active screen-with-progress">
+            <div class="progress-bar">4 de 8</div>
             <div class="screen-content">
               <h1>Primera visita</h1>
               <div class="button-group-horizontal">
@@ -489,10 +504,10 @@
             </div>
           </div>
         `;
-      } else if (currentStep === 4) {
+      } else if (currentStep === 5) {
         app.innerHTML = `
           <div class="screen active screen-with-progress">
-            <div class="progress-bar">4 de 7</div>
+            <div class="progress-bar">5 de 8</div>
             <div class="screen-content">
               <h1>Ubicación</h1>
               <div class="button-group-horizontal">
@@ -502,10 +517,10 @@
             </div>
           </div>
         `;
-      } else if (currentStep === 5) {
+      } else if (currentStep === 6) {
         app.innerHTML = `
           <div class="screen active screen-with-progress">
-            <div class="progress-bar">5 de 7</div>
+            <div class="progress-bar">6 de 8</div>
             <div class="screen-content">
               <h1>Situación de fe</h1>
               <div class="button-group">
@@ -516,10 +531,10 @@
             </div>
           </div>
         `;
-      } else if (currentStep === 6) {
+      } else if (currentStep === 7) {
         app.innerHTML = `
           <div class="screen active screen-with-progress">
-            <div class="progress-bar">6 de 7</div>
+            <div class="progress-bar">7 de 8</div>
             <div class="screen-content">
               <h1>Invitado por</h1>
               <form onsubmit="return submitInvitedBy(event)">
@@ -535,10 +550,10 @@
           const input = document.getElementById('invitado_por');
           if (input) input.focus();
         }, 100);
-      } else if (currentStep === 7) {
+      } else if (currentStep === 8) {
         app.innerHTML = `
           <div class="screen active screen-with-progress">
-            <div class="progress-bar">7 de 7</div>
+            <div class="progress-bar">8 de 8</div>
             <div class="screen-content">
               <h1>Petición de oración</h1>
               <form onsubmit="return submitPrayer(event)">
@@ -554,7 +569,7 @@
           const input = document.getElementById('peticion_oracion');
           if (input) input.focus();
         }, 100);
-      } else if (currentStep === 8) {
+      } else if (currentStep === 9) {
         app.innerHTML = `
           <div class="screen active">
             <div class="screen-content">
@@ -586,16 +601,26 @@
       return false;
     }
 
-    function submitContact(e) {
+    function submitTelefono(e) {
       e.preventDefault();
       const telefono = document.getElementById('telefono').value.trim();
-      const correo = document.getElementById('correo').value.trim();
       if (telefono) {
         formData.telefono = telefono;
-        formData.correo = correo;
         nextStep();
       }
       return false;
+    }
+
+    function submitCorreo(e) {
+      e.preventDefault();
+      formData.correo = document.getElementById('correo').value.trim();
+      nextStep();
+      return false;
+    }
+
+    function skipCorreo() {
+      formData.correo = '';
+      nextStep();
     }
 
     function setFirstVisit(value) {
@@ -627,7 +652,7 @@
       formData.last_updated = new Date().toISOString();
       saveFormData();
       postData();
-      currentStep = 8;
+      currentStep = 9;
       render();
       return false;
     }
