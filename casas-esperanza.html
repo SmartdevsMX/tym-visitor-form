@@ -590,19 +590,20 @@
           <div class="screen active screen-with-progress">
             <div class="progress-bar">1 de 17</div>
             <div class="screen-content">
-              <h1>Día de la reunión</h1>
-              <div class="day-buttons">
-                <button class="btn-secondary day-button" onclick="setDia('Lunes')">Lunes</button>
-                <button class="btn-secondary day-button" onclick="setDia('Martes')">Martes</button>
-                <button class="btn-secondary day-button" onclick="setDia('Miércoles')">Miércoles</button>
-                <button class="btn-secondary day-button" onclick="setDia('Jueves')">Jueves</button>
-                <button class="btn-secondary day-button" onclick="setDia('Viernes')">Viernes</button>
-                <button class="btn-secondary day-button" onclick="setDia('Sábado')">Sábado</button>
-                <button class="btn-secondary day-button" onclick="setDia('Domingo')">Domingo</button>
-              </div>
+              <h1>Fecha de la reunión</h1>
+              <form onsubmit="return submitFecha(event)">
+                <div class="form-group">
+                  <input type="date" id="dia_reunion" value="${formData.dia_reunion}" required autofocus>
+                </div>
+                <button type="submit" class="btn-primary">Siguiente</button>
+              </form>
             </div>
           </div>
         `;
+        setTimeout(() => {
+          const input = document.getElementById('dia_reunion');
+          if (input) input.focus();
+        }, 100);
       } else if (currentStep === 2) {
         app.innerHTML = `
           <div class="screen active screen-with-progress">
@@ -969,9 +970,11 @@
       }
     }
 
-    function setDia(dia) {
-      formData.dia_reunion = dia;
+    function submitFecha(e) {
+      e.preventDefault();
+      formData.dia_reunion = document.getElementById('dia_reunion').value;
       nextStep();
+      return false;
     }
 
     function setVisitors(value) {
