@@ -1,0 +1,3 @@
+# Holds CRECE_AUTH_SECRET; lives only on the server
+crece_auth_config.php
+graphify-out/
